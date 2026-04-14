@@ -2,7 +2,8 @@ import Echo from "laravel-echo";
 import { io } from "socket.io-client";
 
 // Lấy cấu hình từ Window Object (được set trong master layout)
-const SOCKET_HOST = window.CHAT_CONFIG_HOST || window.location.hostname + ":6002";
+//const SOCKET_HOST = window.CHAT_CONFIG_HOST || window.location.hostname + ":6001";
+const SOCKET_HOST = "node.laravel.tk";
 
 window.io = io;
 

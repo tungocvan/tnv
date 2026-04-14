@@ -8,7 +8,7 @@ return [
         ],
         'socket.io' => [
             'driver' => 'socket.io',
-            'host' => env('SOCKET_IO_HOST', 'https://flexbiz.nodejs.tk'),
+            'host' => env('SOCKET_IO_HOST', 'https://node.laravel.tk'),
         ],
     ],
 ];

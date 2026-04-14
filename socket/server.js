@@ -63,7 +63,7 @@ io.on("connection", (socket) => {
     });
 });
 
-const PORT = process.env.PORT || 6003;
+const PORT = process.env.PORT || 6001;
 httpServer.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 Realtime Server running at port ${PORT}`);
 });

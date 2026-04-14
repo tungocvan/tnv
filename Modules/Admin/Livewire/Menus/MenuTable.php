@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Modules\Website\Models\Category;
@@ -238,30 +239,58 @@ class MenuTable extends Component
     public function duplicate($id)
     {
         $original = Category::find($id);
-        if (!$original) return;
+        if (!$original) {
+            $this->dispatch('notify', content: 'Menu không tồn tại.', type: 'warning');
+            return;
+        }
 
         DB::transaction(function () use ($original) {
             $this->recursiveDuplicate($original, $original->parent_id);
         });
 
+        Cache::forget(self::CACHE_KEY);
+
+        Log::info('Menu duplicated', [
+            'menu_id' => $id,
+            'menu_name' => $original->name,
+            'user_id' => auth()->id()
+        ]);
+
         $this->dispatch('notify', content: 'Đã nhân bản menu thành công.', type: 'success');
     }
-
+ 
     private function recursiveDuplicate($original, $parentId)
     {
         // 1. Sao chép bản ghi
         $new = $original->replicate();
-        $new->name = $original->name . ' (Copy)'; // Đổi tên để nhận biết
+        $new->name = $original->name . ' (Copy)';
         $new->parent_id = $parentId;
-        $new->slug = null; // Reset slug để tránh lỗi unique (nếu có)
-        $new->sort_order = $original->sort_order + 1; // Đẩy xuống dưới 1 chút
+        $new->slug = $this->generateUniqueMenuSlug($original);
+        $new->sort_order = $original->sort_order + 1;
         $new->save();
 
         // 2. Tìm các con của bản ghi gốc và nhân bản tiếp
         $children = Category::where('parent_id', $original->id)->get();
         foreach ($children as $child) {
-            $this->recursiveDuplicate($child, $new->id); // Gán vào cha mới
+            $this->recursiveDuplicate($child, $new->id);
         }
+    }
+
+    private function generateUniqueMenuSlug($original): string
+    {
+        $baseSlug = $original->slug
+            ? $original->slug . '-copy'
+            : Str::slug($original->name . ' copy');
+
+        $slug = $baseSlug;
+        $counter = 1;
+
+        while (Category::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
     }
 
     // --- EXPORT FUNCTIONALITY ---
