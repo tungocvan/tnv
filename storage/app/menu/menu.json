@@ -1,0 +1,83 @@
+[
+    {
+        "name": "Dashboard",
+        "url": "\/admin",
+        "icon": "home",
+        "can": "view_dashboard",
+        "is_active": true,
+        "children": []
+    },
+    {
+        "name": "Qu\u1ea3n l\u00fd Chat",
+        "url": "\/admin\/chat",
+        "icon": "users",
+        "can": "view_customer",
+        "is_active": true,
+        "children": []
+    },
+    {
+        "name": "Qu\u1ea3n l\u00fd c\u00e1c Chuy\u00ean m\u1ee5c",
+        "url": "\/admin\/category",
+        "icon": "Menu",
+        "can": "view_customer",
+        "is_active": true,
+        "children": []
+    },
+    {
+        "name": "H\u1ec6 TH\u1ed0NG",
+        "url": null,
+        "icon": null,
+        "can": null,
+        "is_active": true,
+        "children": []
+    },
+    {
+        "name": "Ph\u00e2n quy\u1ec1n & Nh\u00e2n s\u1ef1",
+        "url": null,
+        "icon": "shield-check",
+        "can": "view_staff",
+        "is_active": true,
+        "children": [
+            {
+                "name": "Vai tr\u00f2 (Roles)",
+                "url": "\/admin\/system\/roles",
+                "icon": null,
+                "can": "view_role",
+                "is_active": true,
+                "children": []
+            },
+            {
+                "name": "Nh\u00e2n vi\u00ean (Staff)",
+                "url": "\/admin\/system\/staff",
+                "icon": null,
+                "can": "view_staff",
+                "is_active": true,
+                "children": []
+            }
+        ]
+    },
+    {
+        "name": "C\u1ea5u h\u00ecnh Menu",
+        "url": "\/admin\/menus",
+        "icon": "menu",
+        "can": "view_setting",
+        "is_active": true,
+        "children": []
+    },
+    {
+        "name": "Qu\u1ea3n l\u00fd Database",
+        "url": "\/admin\/database",
+        "icon": "cog",
+        "can": "view_setting",
+        "is_active": true,
+        "children": []
+    },
+    {
+        "name": "Qu\u1ea3n l\u00fd Modules",
+        "url": "admin\/modules",
+        "icon": "menu",
+        "can": null,
+        "is_active": true,
+        "children": []
+    }
+]

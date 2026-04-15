@@ -1,5 +1,11 @@
 *
-!private/
-!public/
-!menu/
 !.gitignore
+
+!private/
+!private/**
+
+!public/
+!public/**
+
+!menu/
+!menu/**
