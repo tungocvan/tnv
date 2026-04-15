@@ -102,7 +102,7 @@ public function backupTable(string $tableName): bool
     {
         $timestamp = now()->format('Y-m-d_H-i-s');
         $fileName = "db_backup_full_{$timestamp}.sql";
-        $path = storage_path("app/private/backups/{$fileName}");
+        $path = storage_path("app/backups/{$fileName}");
 
         if (!is_dir(dirname($path))) mkdir(dirname($path), 0755, true);
 

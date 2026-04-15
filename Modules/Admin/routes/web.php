@@ -5,7 +5,7 @@ use Modules\Admin\Http\Controllers\DashboardController;
 use Modules\Admin\Http\Controllers\AuthController;
 use Modules\Admin\Http\Controllers\ProductController;
 use Modules\Admin\Http\Controllers\MenuController;
-use Modules\Admin\Http\Controllers\CategoryController;
+//use Modules\Admin\Http\Controllers\CategoryController;
 use Modules\Admin\Http\Controllers\OrderController;
 use Modules\Admin\Http\Controllers\SettingController;
 use Modules\Admin\Http\Controllers\PostController;
