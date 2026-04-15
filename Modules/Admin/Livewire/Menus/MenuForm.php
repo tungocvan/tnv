@@ -2,11 +2,12 @@
 
 namespace Modules\Admin\Livewire\Menus;
 
+use Illuminate\Support\Facades\Cache;
+// use Illuminate\Support\Facades\Log;
+// use Illuminate\Support\Str;
 use Livewire\Component;
 use Modules\Website\Models\Category;
 use Spatie\Permission\Models\Permission;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
 
 class MenuForm extends Component
 {
@@ -14,20 +15,51 @@ class MenuForm extends Component
     public $isEdit = false;
 
     public $name, $url, $icon, $can;
+    public $parent_id = null;
     public $is_active = true;
     public $is_section = false;
 
-    protected $rules;
-
-    public function __construct()
+    public function getParentsProperty()
     {
-        $this->rules = config('menu.validation', [
+        $query = Category::menu();
+
+        if ($this->menuId) {
+            $query->where('id', '!=', $this->menuId);
+        }
+
+        $menus = $query->orderBy('sort_order')->orderBy('name')->get();
+
+        return $this->buildTreeOption($menus);
+    }
+
+    protected function buildTreeOption($menus, $parentId = null, $prefix = '')
+    {
+        $result = [];
+
+        foreach ($menus as $menu) {
+            if ((string) $menu->parent_id === (string) $parentId) {
+                $menu->view_name = $prefix . $menu->name;
+                $result[] = $menu;
+
+                $children = $this->buildTreeOption($menus, $menu->getKey(), $prefix . '-- ');
+                $result = array_merge($result, $children);
+            }
+        }
+
+        return $result;
+    }
+
+    protected function rules()
+    {
+        return [
             'name' => 'required|string|max:255',
             'url' => 'nullable|string|max:500',
             'icon' => 'nullable|string|max:100',
-            'can' => 'nullable|exists:permissions,name',
+            'can' => 'nullable|string|max:255', // Bỏ exists check để tránh lỗi khi permission bị xóa
+            'parent_id' => 'nullable|integer', // Bỏ exists check, sẽ check trong code nếu cần
             'is_active' => 'boolean',
-        ]);
+            'is_section' => 'boolean',
+        ];
     }
 
     public function mount($id = null)
@@ -41,6 +73,7 @@ class MenuForm extends Component
             $this->url = $menu->url;
             $this->icon = $menu->icon;
             $this->can = $menu->can;
+            $this->parent_id = $menu->parent_id;
             $this->is_active = (bool)$menu->is_active;
 
             // Logic nhận diện section
@@ -52,61 +85,115 @@ class MenuForm extends Component
         }
     }
 
-    public function updatedIsSection($val) {
-        if($val) $this->url = null;
+    public function updatedIsSection($val)
+    {
+        if ($val) {
+            $this->url = null;
+        }
     }
 
     public function save()
     {
         $this->validate();
 
-        try {
-            $data = [
-                'name' => $this->name,
-                'url' => $this->is_section ? null : $this->url,
-                'icon' => $this->icon,
-                'can' => $this->can,
-                'type' => 'menu',
-                'is_active' => $this->is_active,
-            ];
+        // Log::info('MenuForm save validation passed', [
+        //     'menuId' => $this->menuId,
+        //     'name' => $this->name,
+        //     'isEdit' => $this->isEdit,
+        // ]);
 
-            // Mặc định tạo mới thì nằm cuối cùng (sort_order cao nhất)
-            if (!$this->isEdit) {
-                $data['sort_order'] = Category::menu()->max('sort_order') + 1;
+        try {
+            // Kiểm tra parent_id hợp lệ
+            if ($this->parent_id && !Category::where('id', $this->parent_id)->exists()) {
+                $this->parent_id = null;
             }
 
-            $menu = Category::updateOrCreate(['id' => $this->menuId], $data);
+            $data = [
+                'name' => $this->name,
+                'url' => $this->is_section ? null : ($this->url ?: null),
+                'icon' => $this->icon ?: null,
+                'can' => $this->can ?: null,
+                'parent_id' => $this->parent_id ?: null,
+                'type' => 'menu',
+                'is_active' => (bool) $this->is_active,
+            ];
 
-            // Clear cache
-            \Illuminate\Support\Facades\Cache::forget(config('menu.cache.key', 'admin.menus'));
+            // Tạo hoặc cập nhật slug nếu cần
+            if (!$this->isEdit || ($this->isEdit && $this->name !== Category::find($this->menuId)->name)) {
+                $data['slug'] = $this->generateUniqueSlug($this->name, $this->menuId);
+            }
 
-            // Log action
-            \Illuminate\Support\Facades\Log::info('Menu saved', [
-                'menu_id' => $menu->id,
-                'menu_name' => $menu->name,
-                'action' => $this->isEdit ? 'updated' : 'created',
-                'user_id' => auth()->id()
-            ]);
+            if (!$this->isEdit) {
+                $data['sort_order'] = ((int) Category::menu()->max('sort_order')) + 1;
+            }
+
+            // Log::info('MenuForm save data prepared', ['data' => $data]);
+
+            $menu = Category::updateOrCreate(
+                ['id' => $this->menuId],
+                $data
+            );
+
+            Cache::forget(config('menu.cache.key', 'admin.menus'));
+
+            // Log::info('Menu saved', [
+            //     'menu_id' => $menu->getKey(),
+            //     'menu_name' => $menu->name,
+            //     'action' => $this->isEdit ? 'updated' : 'created',
+            //     'user_id' => auth()->id(),
+            // ]);
 
             session()->flash('success', 'Đã lưu thông tin menu.');
-            return redirect()->route('admin.menus.index');
 
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Menu save failed', [
-                'error' => $e->getMessage(),
-                'user_id' => auth()->id(),
-                'data' => $this->except(['menuId', 'isEdit'])
-            ]);
+            return redirect()->route('admin.menus.index');
+        } catch (\Throwable $e) {
+            // Log::error('Menu save failed', [
+            //     'error' => $e->getMessage(),
+            //     'user_id' => auth()->id(),
+            //     'menu_id' => $this->menuId,
+            //     'trace' => $e->getTraceAsString(),
+            //     'payload' => [
+            //         'name' => $this->name,
+            //         'url' => $this->url,
+            //         'icon' => $this->icon,
+            //         'can' => $this->can,
+            //         'parent_id' => $this->parent_id,
+            //         'is_active' => $this->is_active,
+            //         'is_section' => $this->is_section,
+            //     ],
+            // ]);
 
             session()->flash('error', 'Lỗi khi lưu menu: ' . $e->getMessage());
-            return back();
         }
+    }
+
+    private function generateUniqueSlug(string $name, $excludeId = null): string
+    {
+        $baseSlug = \Illuminate\Support\Str::slug($name);
+        $slug = $baseSlug;
+        $counter = 1;
+
+        $query = Category::where('slug', $slug);
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        while ($query->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+            $query = Category::where('slug', $slug);
+            if ($excludeId) {
+                $query->where('id', '!=', $excludeId);
+            }
+        }
+
+        return $slug;
     }
 
     public function render()
     {
         return view('Admin::livewire.menus.menu-form', [
-            'permissions' => Permission::orderBy('name')->get()
+            'permissions' => Permission::query()->orderBy('name')->get(),
         ]);
     }
 }

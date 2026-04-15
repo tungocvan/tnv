@@ -1,7 +1,7 @@
 <?php
 
-return [
-    'name' => 'Users',
-    'type' => 'shell',
-    'enabled' => false,
-];
+return array (
+  'name' => 'Users',
+  'type' => 'shell',
+  'enabled' => true,
+);

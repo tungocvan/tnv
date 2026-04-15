@@ -23,7 +23,7 @@ class MenuTable extends Component
 
     // --- SEARCH & FILTER ---
     public $search = '';
-    public $filterStatus = 'all'; // all, active, inactive
+    public $filterStatus = 'active'; // all, active, inactive
     public $selectedMenus = [];
     public $selectAll = false;
 
@@ -258,7 +258,7 @@ class MenuTable extends Component
 
         $this->dispatch('notify', content: 'Đã nhân bản menu thành công.', type: 'success');
     }
- 
+
     private function recursiveDuplicate($original, $parentId)
     {
         // 1. Sao chép bản ghi

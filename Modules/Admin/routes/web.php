@@ -11,8 +11,8 @@ use Modules\Admin\Http\Controllers\SettingController;
 use Modules\Admin\Http\Controllers\PostController;
 use Modules\Admin\Http\Controllers\CustomerController;
 use Modules\Admin\Http\Controllers\CouponController;
-use Modules\Admin\Http\Controllers\RoleController;
-use Modules\Admin\Http\Controllers\StaffController;
+//use Modules\Admin\Http\Controllers\RoleController;
+//use Modules\Admin\Http\Controllers\StaffController;
 use Modules\Admin\Http\Controllers\AffiliateController;
 use Modules\Admin\Http\Controllers\HomeSettingsController;
 use Modules\Admin\Http\Controllers\BannerController;
@@ -20,7 +20,7 @@ use Modules\Admin\Http\Controllers\FlashSaleController;
 use Modules\Admin\Http\Controllers\HeaderController;
 use Modules\Admin\Http\Controllers\FooterController;
 use Modules\Admin\Http\Controllers\ProductCommissionController;
-use Modules\Admin\Http\Controllers\ChatController;
+//use Modules\Admin\Http\Controllers\ChatController;
 use Modules\Admin\Http\Controllers\Auth\GoogleController;
 use Modules\Admin\Http\Controllers\EnvConfigController;
 use Modules\Admin\Http\Controllers\DatabaseController;
@@ -36,7 +36,7 @@ Route::middleware(['web'])->group(function () {
     // Protected Routes
     Route::middleware(['web','auth:admin'])->prefix('admin')->name('admin.')->group(function () { // Sau này thêm middleware admin sau
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+        // Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
         Route::get('/profile', [SettingController::class, 'profile'])->name('profile');
         Route::get('/modules', [SettingController::class, 'modules'])->name('modules');
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -68,11 +68,11 @@ Route::middleware(['web'])->group(function () {
             });
         });
 
-        Route::prefix('product-categories')->name('product-categories.')->group(function() {
-            Route::get('/', [CategoryController::class, 'index'])->name('index');
-            Route::get('/create', [CategoryController::class, 'create'])->name('create');
-            Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('edit');
-        });
+        // Route::prefix('product-categories')->name('product-categories.')->group(function() {
+        //     Route::get('/', [CategoryController::class, 'index'])->name('index');
+        //     Route::get('/create', [CategoryController::class, 'create'])->name('create');
+        //     Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('edit');
+        // });
 
 
 
@@ -105,16 +105,17 @@ Route::middleware(['web'])->group(function () {
 
         });
 
-        Route::prefix('/system')->name('roles.')->group(function() {
-            Route::get('/roles', [RoleController::class, 'index'])->name('index');
-            Route::get('/roles/create', [RoleController::class, 'create'])->name('create');
-            Route::get('/roles/{id}/edit', [RoleController::class, 'edit'])->name('edit');
-        });
-        Route::prefix('/system')->name('staff.')->group(function() {
-            Route::get('/staff', [StaffController::class, 'index'])->name('index');
-            Route::get('/staff/create', [StaffController::class, 'create'])->name('create');
-            Route::get('/staff/{id}/edit', [StaffController::class, 'edit'])->name('edit');
-        });
+        // Route::prefix('/system')->name('roles.')->group(function() {
+        //     Route::get('/roles', [RoleController::class, 'index'])->name('index');
+        //     Route::get('/roles/create', [RoleController::class, 'create'])->name('create');
+        //     Route::get('/roles/{id}/edit', [RoleController::class, 'edit'])->name('edit');
+        // });
+
+        // Route::prefix('/system')->name('staff.')->group(function() {
+        //     Route::get('/staff', [StaffController::class, 'index'])->name('index');
+        //     Route::get('/staff/create', [StaffController::class, 'create'])->name('create');
+        //     Route::get('/staff/{id}/edit', [StaffController::class, 'edit'])->name('edit');
+        // });
 
         Route::prefix('/database')->name('database.')->group(function() {
             Route::get('/', [DatabaseController::class, 'index'])

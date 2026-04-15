@@ -18,7 +18,7 @@
                 <div class="flex items-center">
                     <button type="button" wire:click="$toggle('is_section')" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none {{ $is_section ? 'bg-indigo-600' : 'bg-gray-300' }}">
                         <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ $is_section ? 'translate-x-5' : 'translate-x-0' }}"></span>
-                    </button>
+                    </button> 
                 </div>
             </div>
 
@@ -26,6 +26,17 @@
                 <label class="block text-sm font-bold text-gray-700 mb-1">Tên hiển thị <span class="text-red-500">*</span></label>
                 <input type="text" wire:model="name" class="w-full rounded-lg border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 font-bold" placeholder="VD: Sản phẩm">
                 @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Menu cha</label>
+                <select wire:model="parent_id" class="w-full rounded-lg border-gray-300 focus:ring-indigo-500 text-sm">
+                    <option value="">-- Là mục gốc --</option>
+                    @foreach($this->parents as $parent)
+                        <option value="{{ $parent->getKey() }}">{{ $parent->view_name }}</option>
+                    @endforeach
+                </select>
+                @error('parent_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
             <div x-data="{ section: @entangle('is_section') }" x-show="!section" x-collapse class="space-y-6">
