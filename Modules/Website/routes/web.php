@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
-// Controllers Import
+// Controllers Frontend
 use Modules\Website\Http\Controllers\AuthController;
 use Modules\Website\Http\Controllers\AccountController;
 use Modules\Website\Http\Controllers\WebsiteController;
@@ -11,6 +11,15 @@ use Modules\Website\Http\Controllers\PostController;
 use Modules\Website\Http\Controllers\ProductController;
 use Modules\Website\Http\Controllers\CartController;
 use Modules\Website\Http\Controllers\CheckoutController;
+// Controllers Admin
+use Modules\Website\Http\Controllers\Admin\AffiliateController;
+use Modules\Website\Http\Controllers\Admin\HomeSettingsController;
+use Modules\Website\Http\Controllers\Admin\HeaderController;
+use Modules\Website\Http\Controllers\Admin\FooterController;
+use Modules\Website\Http\Controllers\Admin\BannerController;
+use Modules\Website\Http\Controllers\Admin\FlashSaleController;
+use Modules\Website\Http\Controllers\Admin\CouponController;
+use Modules\Website\Http\Controllers\Admin\CustomerController;
 
 // Config
 $websitePrefix = config('website.route_prefix', 'website');
@@ -98,4 +107,29 @@ Route::middleware(['web'])->group(function () use ($websitePrefix) {
         ->name('wishlist');
         });
 
+});
+
+Route::middleware(['web','auth:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/affiliate', [AffiliateController::class, 'index'])->name('affiliate.index');
+        Route::get('/homepage-settings', [HomeSettingsController::class, 'index'])
+        ->name('home.settings');
+        Route::get('/header-settings', [HeaderController::class, 'index'])
+        ->name('header.settings');
+        Route::get('/footer-settings', [FooterController::class, 'index'])
+        ->name('footer.settings');
+        // Banner Manager
+        Route::get('/banners', [BannerController::class, 'index'])->name('banners');
+        // Flash Sale Manager
+        Route::get('/flash-sales', [FlashSaleController::class, 'index'])->name('flash-sales');
+
+        Route::prefix('coupons')->name('coupons.')->group(function() {
+            Route::get('/', [CouponController::class, 'index'])->name('index');
+            Route::get('/create', [CouponController::class, 'create'])->name('create');
+            Route::get('/{id}/edit', [CouponController::class, 'edit'])->name('edit');
+        });
+        Route::prefix('customers')->name('customers.')->group(function () {
+            Route::get('/', [CustomerController::class, 'index'])->name('index');
+            Route::get('/create', [CustomerController::class, 'create'])->name('create');
+            Route::get('/{id}', [CustomerController::class, 'show'])->name('show');
+        });
 });

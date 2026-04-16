@@ -17,6 +17,11 @@ class TableList extends Component
     // UI Feedback
     public $loadingAction = null; // Lưu tên bảng đang được xử lý
 
+    public $backupFiles = [];
+    public $selectedBackupFile = null;
+    public $showRestoreModal = false;
+    public $isRestoring = false;
+
     public function boot(DatabaseService $service)
     {
         // Inject Service
@@ -107,5 +112,37 @@ class TableList extends Component
         return view('Admin::livewire.database.table-list', [
             'tables' => $tables
         ]);
+    }
+
+    public function openRestoreModal()
+    {
+        $this->backupFiles = app(DatabaseService::class)->getAllBackupFiles();
+        $this->showRestoreModal = true;
+    }
+
+    public function restoreDatabase()
+    {
+        if ($this->isRestoring) return;
+
+        if (!$this->selectedBackupFile) {
+            $this->dispatch('notify', type: 'error', message: 'Vui lòng chọn file backup');
+            return;
+        }
+
+        $this->isRestoring = true;
+
+        try {
+            app(\Modules\Admin\Services\DatabaseService::class)
+                ->restoreFromFile($this->selectedBackupFile);
+
+            $this->dispatch('notify', type: 'success', message: 'Restore database thành công');
+
+            $this->showRestoreModal = false;
+
+        } catch (\Throwable $e) {
+            $this->dispatch('notify', type: 'error', message: 'Restore thất bại: ' . $e->getMessage());
+        } finally {
+            $this->isRestoring = false;
+        }
     }
 }
