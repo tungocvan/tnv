@@ -1,3 +1,3 @@
 <div>
-    <!-- Ntd shell livewire placeholder -->
+    <!-- Ntd domain livewire placeholder -->
 </div>

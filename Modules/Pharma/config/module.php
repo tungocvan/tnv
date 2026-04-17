@@ -1,7 +1,7 @@
 <?php
 
-return [
-    'name' => 'Pharma',
-    'type' => 'shell',
-    'enabled' => true,
-];
+return array (
+  'name' => 'Pharma',
+  'type' => 'shell',
+  'enabled' => false,
+);

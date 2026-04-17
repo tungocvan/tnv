@@ -7,5 +7,12 @@ Route::middleware(['web','auth:admin'])
     ->prefix('/admin/ntd')
     ->name('admin.ntd.')
     ->group(function () {
+        Route::get('/', [NtdController::class, 'admin'])->name('index');
+});
+
+Route::middleware(['web'])
+    ->prefix('/ntd')
+    ->name('ntd.')
+    ->group(function () {
         Route::get('/', [NtdController::class, 'index'])->name('index');
-    });
+});

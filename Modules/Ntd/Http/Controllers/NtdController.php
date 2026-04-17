@@ -3,7 +3,7 @@
 namespace Modules\Ntd\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+// use Illuminate\Http\Request;
 
 class NtdController extends Controller
 {
@@ -17,6 +17,10 @@ class NtdController extends Controller
 
     public function index()
     {
-        return view('Ntd::ntd');
+        return view('Ntd::pages.index');
+    }
+    public function admin()
+    {
+        return view('Ntd::pages.admin.ntd');
     }
 }

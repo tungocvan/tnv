@@ -1,7 +1,7 @@
 <?php
 
-return array (
-  'name' => 'Ntd',
-  'type' => 'shell',
-  'enabled' => true,
-);
+return [
+    'name' => 'Ntd',
+    'type' => 'domain',
+    'enabled' => true,
+];
