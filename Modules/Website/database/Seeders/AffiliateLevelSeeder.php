@@ -3,7 +3,7 @@
 namespace Modules\Website\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Modules\Admin\Models\AffiliateLevel;
+use Modules\Website\Models\AffiliateLevel;
 // php artisan db:seed --class="Modules\Website\database\Seeders\AffiliateLevelSeeder"
 class AffiliateLevelSeeder extends Seeder
 {

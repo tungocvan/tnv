@@ -3,8 +3,8 @@
 namespace Modules\Website\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Modules\Admin\Models\AffiliateLevel;
-use Modules\Admin\Models\AffiliateScheme;
+use Modules\Website\Models\AffiliateLevel;
+use Modules\Website\Models\AffiliateScheme;
 use Modules\Website\Models\WpProduct;
 use App\Models\User;
 
