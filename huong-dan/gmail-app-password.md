@@ -1,3 +1,23 @@
+# Hướng dẫn đăng nhập admin bằng tài khoản gmail:
+-B1: Mở trình duyệt -> đăng nhập vào tài khoản gmail bất kỳ
+-B2: nhấn link
+https://console.cloud.google.com/auth/clients
+- có thể tạo mới Client ID for Web application hoặc chọn project  Web application đã tồn tại
+- thêm link vào: Authorized JavaScript origins
+https://ntd.laravel.tk
+- thêm link vào: Authorized redirect URIs
+https://ntd.laravel.tk/auth/google/callback
+
+- lấy 3 thông tin gán vào .env
+GOOGLE_CLIENT_ID ="....."
+GOOGLE_CLIENT_SECRET ="...."
+GOOGLE_REDIRECT ="/auth/google/callback"
+- lưu ý: app/config/services.php phải bắt buộc có:
+ 'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT'),
+    ],
 # Hướng dẫn tạo App Password (Mật khẩu ứng dụng) cho Gmail
 
 **Mục đích:** tạo "App Password" để dùng làm `MAIL_PASSWORD` cho ứng dụng (Laravel, SMTP client) khi tài khoản Google đã bật xác thực 2 bước.

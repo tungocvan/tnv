@@ -2,10 +2,14 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+//use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Modules\Website\database\Seeders\WebsiteDatabaseSeeder;
+use Modules\Role\database\seeders\RolesAndPermissionsSeeder;
+use Modules\Users\database\seeders\UserAdminSeeder;
+use Modules\Users\database\seeders\UserSeeder;
+use Modules\Admin\database\seeders\MenuCategorySeeder;
+//use Modules\Website\database\Seeders\WebsiteDatabaseSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,9 +21,14 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            // RolesAndPermissionsSeeder::class,
-            //UserDemoRoles::class,
-            WebsiteDatabaseSeeder::class
+
+             RolesAndPermissionsSeeder::class,
+            // 1. Tạo người dùng trước
+            UserAdminSeeder::class,
+            UserSeeder::class,
+             // 5. Tạo menu sidebar
+            MenuCategorySeeder::class,
+            // WebsiteDatabaseSeeder::class
         ]);
 
     }

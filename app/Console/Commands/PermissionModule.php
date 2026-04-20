@@ -24,25 +24,26 @@ class PermissionModule extends Command
     /**
      * Execute the console command.
      */
+
     public function handle()
     {
-        $name = $this->argument('name');
-        $permission = Permission::where('name','=',$name.'-list')->first();
+        $name = strtolower($this->argument('name'));
 
-        if($permission){
-            $this->info("module $name đã được phân quyền");
-        }else{
-            $permissionsArray = [
-                'view_'.$name,
-                'create_'.$name,
-                'edit_'.$name,
-                'delete_'.$name,
-             ];
-            foreach ($permissionsArray as $permission) {
-                Permission::create(['name' => $permission]);
+        $permissionsArray = [
+            "view_{$name}",
+            "create_{$name}",
+            "edit_{$name}",
+            "delete_{$name}",
+        ];
+
+        foreach ($permissionsArray as $perm) {
+
+            if (!Permission::where('name', $perm)->exists()) {
+                Permission::create(['name' => $perm]);
+                $this->info("✅ Created permission: {$perm}");
+            } else {
+                $this->warn("⚠️ Already exists: {$perm}");
             }
         }
-
-
     }
 }

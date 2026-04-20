@@ -6,6 +6,8 @@ use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\File;
 
 class CreateModule extends Command
 {
@@ -65,14 +67,26 @@ class CreateModule extends Command
 
     protected function deleteModule(string $modulePath, string $name): int
     {
-        if (! $this->files->exists($modulePath)) {
-            $this->error("Module {$name} khong ton tai.");
-
+        if (! File::exists($modulePath)) {
+            $this->error("Module {$name} không tồn tại.");
             return self::INVALID;
         }
 
-        $this->files->deleteDirectory($modulePath);
-        $this->info("Da xoa module {$name} thanh cong.");
+        $module = strtolower($name);
+
+        // 🧠 1. Xóa permissions
+        Permission::where('name', 'like', "%_{$module}")->get()
+            ->each(function ($permission) {
+                $permission->roles()->detach(); // an toàn hơn
+                $permission->delete();
+            });
+
+        $this->info("🗑️ Đã xóa permissions của module: {$module}");
+
+        // 📂 2. Xóa folder (nếu muốn)
+        File::deleteDirectory($modulePath);
+
+        $this->info("✅ Đã xóa module {$name}");
 
         return self::SUCCESS;
     }
