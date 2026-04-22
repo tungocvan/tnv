@@ -10,5 +10,14 @@
 !menu/
 !menu/**
 
+!admission/
+!admission/**
+
+!import/
+!import/**
+
+!templates/
+!templates/**
+
 !backups/
 !backups/**
