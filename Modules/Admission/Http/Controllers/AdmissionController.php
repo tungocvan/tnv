@@ -3,10 +3,10 @@
 namespace Modules\Admission\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+
 use Modules\Admission\Services\AdmissionService;
 use Modules\Admission\Models\AdmissionApplication;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Symfony\Component\Process\Process;
 
 class AdmissionController extends Controller
 {
@@ -32,33 +32,116 @@ class AdmissionController extends Controller
     {
         return view('Admission::pages.admin.index');
     }
+    public function adminCreate()
+    {
+        return view('Admission::pages.admin.create');
+    }
 
     /**
      * Giao diện chỉnh sửa đơn (Admin CRUD)
      */
     public function adminEdit($id)
     {
-        $application = AdmissionApplication::findOrFail($id);
-        return view('Admission::pages.admin.edit', compact('application'));
+
+        return view('Admission::pages.admin.create',compact('id'));
+        // $application = AdmissionApplication::findOrFail($id);
+        // return view('Admission::pages.admin.edit', compact('application'));
     }
 
     /**
      * XỬ LÝ XUẤT PDF - TRẢ VỀ FILE GIỐNG WORD
      */
-    public function downloadPdf($id)
+
+    public function downloadPdf($id, AdmissionService $service)
+{
+    try {
+        // 1. Lấy dữ liệu hồ sơ
+        $data = $service->getDataForTemplate($id);
+        $fileNameBase = 'Don_Dang_Ky_' . str_replace(' ', '_', $data['HoVaTenHocSinh']);
+
+        $tempDir = storage_path('app/admission/');
+        if (!file_exists($tempDir)) {
+            mkdir($tempDir, 0777, true);
+        }
+
+        $wordPath = $tempDir . $fileNameBase . '.docx';
+        $pdfPath  = $tempDir . $fileNameBase . '.pdf';
+
+        // 2. KIỂM TRA TỒN TẠI PDF (Ưu tiên số 1)
+        if (file_exists($pdfPath)) {
+            return response()->download($pdfPath);
+        }
+
+        // 3. NẾU CHƯA CÓ PDF, KIỂM TRA WORD
+        if (!file_exists($wordPath)) {
+            // Chỉ tạo file Word nếu chưa tồn tại
+            $templatePath = storage_path('app/templates/application.docx');
+            if (!file_exists($templatePath)) {
+                throw new \Exception("Không tìm thấy file mẫu tại: " . $templatePath);
+            }
+
+            $templateProcessorClass = 'PhpOffice\\PhpWord\\TemplateProcessor';
+            $templateProcessor = new $templateProcessorClass($templatePath);
+
+            foreach ($data as $key => $value) {
+                $templateProcessor->setValue($key, $value);
+            }
+
+            $templateProcessor->saveAs($wordPath);
+        }
+
+        // 4. CHUYỂN ĐỔI SANG PDF (Sử dụng Symfony Process)
+        // Vì libreoffice --convert-to pdf sẽ tự lấy tên file cũ đổi đuôi thành .pdf
+        // nên ta cần chạy lệnh convert
+        $process = new Process([
+            'libreoffice',
+            '--headless',
+            '--convert-to', 'pdf',
+            '--outdir', $tempDir,
+            $wordPath
+        ]);
+
+        $process->setEnv(['HOME' => $tempDir]);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new \Exception('Lỗi chuyển đổi PDF: ' . $process->getErrorOutput());
+        }
+
+        // Kiểm tra lại xem file PDF đã thực sự được tạo ra chưa
+        if (!file_exists($pdfPath)) {
+            throw new \Exception('LibreOffice không tạo được file PDF.');
+        }
+
+        // 5. TRẢ VỀ FILE (Không xóa file để lần sau dùng lại làm cache)
+        return response()->download($pdfPath);
+
+    } catch (\Exception $e) {
+        \Log::error('Lỗi xuất PDF: ' . $e->getMessage());
+        return back()->with('error', 'Lỗi khi xuất PDF: ' . $e->getMessage());
+    }
+}
+
+    public function downloadDocx($id, AdmissionService $service)
     {
-        // 1. Lấy Full Data đã được mapping từ Service
-        $data = $this->admissionService->getDataForPdf($id);
+        $data = $service->getDataForTemplate($id);
 
-        // 2. Load View PDF (Template này sẽ thiết kế giống file Word của bạn)
-        $pdf = Pdf::loadView('Admission::pdf.registration', $data)
-                  ->setPaper('a4', 'portrait')
-                  ->setWarnings(false);
+        // Đường dẫn tới tệp Word mẫu bạn đã gửi
+        //  $templatePath = storage_path('app/templates/bieumau-2_MergeFields_Full.docx');
+        //   $templateProcessor = new TemplateProcessor($templatePath);
+        $templateProcessorClass = 'PhpOffice\\PhpWord\\TemplateProcessor';
+        $templateProcessor = new $templateProcessorClass(storage_path('app/templates/application.docx'));
 
-        // 3. Đặt tên file: Don_Dang_Ky_HoTen_MHS.pdf
-        $fileName = 'Don_Dang_Ky_' . str_replace(' ', '_', $data['HoVaTenHocSinh']) . '_' . $data['MHS'] . '.pdf';
+        // Điền tất cả dữ liệu vào các biến «...»
+        foreach ($data as $key => $value) {
+            $templateProcessor->setValue($key, $value);
+        }
 
-        // 4. Trả về trình duyệt để tự động tải xuống
-        return $pdf->download($fileName);
+        // Lưu tệp tạm
+        $fileName = 'Don_Dang_Ky_' . $data['HoVaTenHocSinh'] . '.docx';
+        $tempFile = tempnam(sys_get_temp_dir(), 'word');
+        $templateProcessor->saveAs($tempFile);
+
+        return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
     }
 }

@@ -1,7 +1,17 @@
 <div>
     <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        @if ($errors->any())
+        <div class="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
+            <p class="font-bold">Vui lòng kiểm tra lại các thông tin sau:</p>
+            <ul class="list-disc ml-5">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
-        
+
         <div class="bg-gray-50 border-b px-8 py-6">
             <div class="flex items-center justify-between relative">
                 @foreach(['Học sinh', 'Địa chỉ', 'Bổ sung', 'Phụ huynh', 'Hoàn tất'] as $index => $stepName)
@@ -23,7 +33,7 @@
         </div>
 
         <form wire:submit.prevent="save" class="p-8 sm:p-12">
-            
+
             {{-- BƯỚC 1: THÔNG TIN HỌC SINH --}}
             @if($currentStep == 1)
             <div class="animate-in fade-in slide-in-from-right-5 duration-500">
@@ -142,9 +152,11 @@
                         <option value="Cha mẹ">Cha mẹ</option><option value="Cha">Cha</option><option value="Mẹ">Mẹ</option>
                     </select>
                 </div>
-                <div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <label class="block text-sm font-black text-gray-700 mb-2">LÀ CON THỨ MẤY?</label>
-                    <input type="number" wire:model="form.ConThu" class="w-full border-2 border-gray-300 rounded-2xl p-4 focus:border-blue-500">
+                    <input type="number" wire:model="form.ConThu" class="border-2 border-gray-300 rounded-2xl p-4 focus:border-blue-500">
+                    <label class="block text-sm font-black text-gray-700 mb-2">TỔNG SỐ ANH/CHỊ EM</label>
+                    <input type="number" wire:model="form.TSAnhChiEm" class=" border-2 border-gray-300 rounded-2xl p-4 focus:border-blue-500">
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-sm font-black text-gray-700 mb-2">TẠI TRƯỜNG MẦM NON</label>
@@ -228,13 +240,10 @@
                 @endif
 
                 @if($currentStep < 5)
-                    <button type="button" wire:click="nextStep" class="w-full sm:w-auto px-12 py-5 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-700 shadow-xl shadow-blue-200 transition-all transform hover:-translate-y-1 uppercase tracking-widest">
-                        TIẾP THEO
-                    </button>
+                    <button type="button" wire:click="nextStep" class="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl">TIẾP THEO</button>
                 @else
-                    <button type="submit" wire:loading.attr="disabled" class="w-full sm:w-auto px-16 py-6 bg-gradient-to-r from-green-600 to-emerald-700 text-white font-black rounded-3xl hover:shadow-2xl transition-all transform hover:scale-105 uppercase tracking-widest shadow-xl flex items-center justify-center">
-                        <span wire:loading.remove>HOÀN TẤT & XUẤT ĐƠN PDF</span>
-                        <span wire:loading>ĐANG XỬ LÝ...</span>
+                    <button type="submit" class="px-8 py-3 bg-green-600 text-white font-bold rounded-xl shadow-lg hover:bg-green-700 transition-all">
+                        HOÀN TẤT & XUẤT ĐƠN PDF
                     </button>
                 @endif
             </div>

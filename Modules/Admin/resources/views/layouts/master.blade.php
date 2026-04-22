@@ -8,10 +8,10 @@
         use Modules\Website\Models\Setting;
         $favicon = Setting::getValue('site_favicon');
     @endphp
-    @if($favicon)
+    @if ($favicon)
         <link rel="icon" type="image/png" href="{{ asset('storage/' . $favicon) }}">
     @endif
-    <title>@yield('title','HOMEPAGE')</title>
+    <title>@yield('title', 'HOMEPAGE')</title>
     {!! Setting::getValue('header_script') !!}
     @yield('css')
     <script>
