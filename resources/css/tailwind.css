@@ -12,3 +12,5 @@
   --typography-prose-headings: var(--color-gray-900);
   --typography-prose-links: var(--color-primary);
 }
+
+ @import './custom.css';
