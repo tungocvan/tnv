@@ -28,4 +28,8 @@ class AdmissionApplication extends Model
         'ck_goc_hoc_tap', 'ck_sach_vo', 'ck_hop_ph', 'ck_tham_gia_hd', 'ck_gan_gui',
         'ngay_lam_don', 'nguoi_lam_don'
     ];
+    protected $casts = [
+    'kha_nang_hoc_sinh' => 'array',
+    'suc_khoe_can_luu_y' => 'array',
+];
 }

@@ -1,5 +1,5 @@
 <div class="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 pb-12">
-    
+
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
         <div>
             <h1 class="text-2xl font-bold text-gray-900 tracking-tight flex items-center">
@@ -17,7 +17,7 @@
             </h1>
             <p class="mt-1 text-sm text-gray-500 ml-14">Thiết lập thông tin đăng nhập và phân quyền truy cập hệ thống.</p>
         </div>
-        
+
         <div class="flex items-center gap-3">
             <a href="{{ route('admin.staff.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition">
                 <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
@@ -27,15 +27,15 @@
     </div>
 
     <form wire:submit="save" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         <div class="lg:col-span-2 space-y-6">
-            
+
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
                     <h3 class="text-base font-bold text-gray-900">Thông tin đăng nhập</h3>
                     <span class="text-xs text-gray-400 font-medium uppercase tracking-wider">Account Info</span>
                 </div>
-                
+
                 <div class="p-6 space-y-6">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
@@ -81,11 +81,11 @@
                     <h3 class="text-base font-bold text-gray-900">Trạng thái hoạt động</h3>
                     <p class="text-sm text-gray-500 mt-1">Gạt tắt để tạm thời chặn quyền truy cập của nhân viên này.</p>
                 </div>
-                
-                <button type="button" wire:click="$toggle('is_active')" 
+
+                <button type="button" wire:click="$toggle('is_active')"
                         class="relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 {{ $is_active ? 'bg-green-500' : 'bg-gray-200' }}">
                     <span class="sr-only">Toggle status</span>
-                    <span aria-hidden="true" 
+                    <span aria-hidden="true"
                           class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ $is_active ? 'translate-x-5' : 'translate-x-0' }}">
                     </span>
                 </button>
@@ -94,7 +94,7 @@
 
         <div class="space-y-6">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden sticky top-6">
-                
+
                 <div class="px-6 py-4 bg-indigo-50 border-b border-indigo-100">
                     <h3 class="text-base font-bold text-indigo-900 flex items-center">
                         <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
@@ -105,17 +105,18 @@
 
                 <div class="p-4 space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar">
                     @foreach($roles as $role)
+                         @continue($role->name === 'Super Admin' && !auth('admin')->user()->hasRole('Super Admin'))
                         <label class="group relative flex items-start p-3 border rounded-xl cursor-pointer transition-all duration-200 select-none
-                            {{ in_array($role->name, $selectedRoles) 
-                                ? 'bg-indigo-50 border-indigo-200 ring-1 ring-indigo-500 z-10' 
-                                : 'border-gray-200 hover:bg-gray-50 hover:border-gray-300' 
+                            {{ in_array($role->name, $selectedRoles)
+                                ? 'bg-indigo-50 border-indigo-200 ring-1 ring-indigo-500 z-10'
+                                : 'border-gray-200 hover:bg-gray-50 hover:border-gray-300'
                             }}">
-                            
+
                             <div class="flex items-center h-5">
-                                <input type="checkbox" wire:model="selectedRoles" value="{{ $role->name }}" 
+                                <input type="checkbox" wire:model="selectedRoles" value="{{ $role->name }}"
                                        class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                             </div>
-                            
+
                             <div class="ml-3 w-full">
                                 <div class="flex justify-between items-center">
                                     <span class="block text-sm font-bold text-gray-900 {{ in_array($role->name, $selectedRoles) ? 'text-indigo-700' : '' }}">
@@ -131,7 +132,7 @@
                     @endforeach
                 </div>
 
-                @error('selectedRoles') 
+                @error('selectedRoles')
                     <div class="px-6 pb-4">
                         <p class="text-sm text-red-600 bg-red-50 p-2 rounded border border-red-100 flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>

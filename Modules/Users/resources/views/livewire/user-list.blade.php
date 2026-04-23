@@ -10,13 +10,13 @@
                 </button>
             </div>
         </div>
- 
+
         <div class="card-body">
             {{-- Search & Filter --}}
             <div class="row mb-3">
                 <div class="col-md-4">
                     <div class="input-group input-group-sm">
-                       
+
                         <input type="text" wire:model.live.debounce.300ms="search" class="form-control"
                             placeholder="Tìm kiếm...">
 
@@ -78,7 +78,7 @@
             <div class="table-responsive">
                 <table class="table-hover table-bordered mb-0 table">
                     <thead class="thead-light">
-                        <tr> 
+                        <tr>
                             <th width="40"><input type="checkbox" wire:model.live="selectAll"
                                     wire:click="toggleSelectAll"></th>
                             <th wire:click="sortBy('id')" style="cursor:pointer;">ID <i
@@ -102,7 +102,13 @@
                                 <td>{{ $user->email }}</td>
                                 <td>
                                     @foreach ($user->getRoleNames() as $role)
-                                        <span class="badge badge-info">{{ $role }}</span>
+                                        @if ($superAdmin === true )
+                                            <span class="badge badge-danger">{{ $role }}</span>
+                                        @endif
+                                        @if ($superAdmin === false)
+                                                {{-- <span class="badge badge-info">{{ $role }}</span> --}}
+                                        @endif
+                                        @endif
                                     @endforeach
                                 </td>
                                 <td>
@@ -152,7 +158,7 @@
     </div>
         </div>
     </div>
-    {{-- @include('livewire.users.user-form')    
+    {{-- @include('livewire.users.user-form')
     @include('livewire.users.user-form-role')  --}}
 
 </div>
@@ -182,8 +188,8 @@
             });
 
             $('[data-dismiss="modal"]').on('click', function() {
-                $(this).closest('.modal').modal('hide');          
-                Livewire.dispatch('reset-form');    
+                $(this).closest('.modal').modal('hide');
+                Livewire.dispatch('reset-form');
             });
 
             document.addEventListener('open-print-window', event => {
@@ -200,7 +206,7 @@
                 }
             });
 
-            
+
 
         });
     </script>
