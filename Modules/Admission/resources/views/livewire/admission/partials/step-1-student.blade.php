@@ -81,7 +81,7 @@
 
 
     {{-- ================= NHÓM 2: THÔNG TIN CÁ NHÂN ================= --}}
-    <div class="bg-white border rounded-2xl p-6 space-y-6">
+    <div class="bg-white border rounded-2xl p-6 space-y-6 my-1">
 
         <h3 class="font-semibold text-gray-700 uppercase text-sm">
             Thông tin cá nhân

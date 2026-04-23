@@ -53,74 +53,74 @@ class AdmissionController extends Controller
      */
 
     public function downloadPdf($id, AdmissionService $service)
-{
-    try {
-        // 1. Lấy dữ liệu hồ sơ
-        $data = $service->getDataForTemplate($id);
-        $fileNameBase = 'Don_Dang_Ky_' . str_replace(' ', '_', $data['HoVaTenHocSinh']);
+    {
+        try {
+            // 1. Lấy dữ liệu hồ sơ
+            $data = $service->getDataForTemplate($id);
+            $fileNameBase = 'Don_Dang_Ky_' . str_replace(' ', '_', $data['HoVaTenHocSinh']);
 
-        $tempDir = storage_path('app/admission/');
-        if (!file_exists($tempDir)) {
-            mkdir($tempDir, 0777, true);
-        }
+            $tempDir = storage_path('app/admission/');
+            if (!file_exists($tempDir)) {
+                mkdir($tempDir, 0777, true);
+            }
 
-        $wordPath = $tempDir . $fileNameBase . '.docx';
-        $pdfPath  = $tempDir . $fileNameBase . '.pdf';
+            $wordPath = $tempDir . $fileNameBase . '.docx';
+            $pdfPath  = $tempDir . $fileNameBase . '.pdf';
 
-        // 2. KIỂM TRA TỒN TẠI PDF (Ưu tiên số 1)
-        if (file_exists($pdfPath)) {
+            // 2. KIỂM TRA TỒN TẠI PDF (Ưu tiên số 1)
+            if (file_exists($pdfPath)) {
+                return response()->download($pdfPath);
+            }
+
+            // 3. NẾU CHƯA CÓ PDF, KIỂM TRA WORD
+            if (!file_exists($wordPath)) {
+                // Chỉ tạo file Word nếu chưa tồn tại
+                $templatePath = storage_path('app/templates/application.docx');
+                if (!file_exists($templatePath)) {
+                    throw new \Exception("Không tìm thấy file mẫu tại: " . $templatePath);
+                }
+
+                $templateProcessorClass = 'PhpOffice\\PhpWord\\TemplateProcessor';
+                $templateProcessor = new $templateProcessorClass($templatePath);
+
+                foreach ($data as $key => $value) {
+                    $templateProcessor->setValue($key, $value);
+                }
+
+                $templateProcessor->saveAs($wordPath);
+            }
+
+            // 4. CHUYỂN ĐỔI SANG PDF (Sử dụng Symfony Process)
+            // Vì libreoffice --convert-to pdf sẽ tự lấy tên file cũ đổi đuôi thành .pdf
+            // nên ta cần chạy lệnh convert
+            $process = new Process([
+                'libreoffice',
+                '--headless',
+                '--convert-to', 'pdf',
+                '--outdir', $tempDir,
+                $wordPath
+            ]);
+
+            $process->setEnv(['HOME' => $tempDir]);
+            $process->run();
+
+            if (!$process->isSuccessful()) {
+                throw new \Exception('Lỗi chuyển đổi PDF: ' . $process->getErrorOutput());
+            }
+
+            // Kiểm tra lại xem file PDF đã thực sự được tạo ra chưa
+            if (!file_exists($pdfPath)) {
+                throw new \Exception('LibreOffice không tạo được file PDF.');
+            }
+
+            // 5. TRẢ VỀ FILE (Không xóa file để lần sau dùng lại làm cache)
             return response()->download($pdfPath);
+
+        } catch (\Exception $e) {
+            \Log::error('Lỗi xuất PDF: ' . $e->getMessage());
+            return back()->with('error', 'Lỗi khi xuất PDF: ' . $e->getMessage());
         }
-
-        // 3. NẾU CHƯA CÓ PDF, KIỂM TRA WORD
-        if (!file_exists($wordPath)) {
-            // Chỉ tạo file Word nếu chưa tồn tại
-            $templatePath = storage_path('app/templates/application.docx');
-            if (!file_exists($templatePath)) {
-                throw new \Exception("Không tìm thấy file mẫu tại: " . $templatePath);
-            }
-
-            $templateProcessorClass = 'PhpOffice\\PhpWord\\TemplateProcessor';
-            $templateProcessor = new $templateProcessorClass($templatePath);
-
-            foreach ($data as $key => $value) {
-                $templateProcessor->setValue($key, $value);
-            }
-
-            $templateProcessor->saveAs($wordPath);
-        }
-
-        // 4. CHUYỂN ĐỔI SANG PDF (Sử dụng Symfony Process)
-        // Vì libreoffice --convert-to pdf sẽ tự lấy tên file cũ đổi đuôi thành .pdf
-        // nên ta cần chạy lệnh convert
-        $process = new Process([
-            'libreoffice',
-            '--headless',
-            '--convert-to', 'pdf',
-            '--outdir', $tempDir,
-            $wordPath
-        ]);
-
-        $process->setEnv(['HOME' => $tempDir]);
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            throw new \Exception('Lỗi chuyển đổi PDF: ' . $process->getErrorOutput());
-        }
-
-        // Kiểm tra lại xem file PDF đã thực sự được tạo ra chưa
-        if (!file_exists($pdfPath)) {
-            throw new \Exception('LibreOffice không tạo được file PDF.');
-        }
-
-        // 5. TRẢ VỀ FILE (Không xóa file để lần sau dùng lại làm cache)
-        return response()->download($pdfPath);
-
-    } catch (\Exception $e) {
-        \Log::error('Lỗi xuất PDF: ' . $e->getMessage());
-        return back()->with('error', 'Lỗi khi xuất PDF: ' . $e->getMessage());
     }
-}
 
     public function downloadDocx($id, AdmissionService $service)
     {

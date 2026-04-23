@@ -14,7 +14,7 @@
             <div class="md:col-span-2">
                 <label class="text-sm font-medium">Họ tên cha</label>
                 <input type="text"
-                       wire:model="form.ho_ten_cha"
+                       wire:model="form.HoTenCha"
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
 
@@ -22,7 +22,7 @@
             <div>
                 <label class="text-sm font-medium">Năm sinh</label>
                 <input type="number"
-                       wire:model="form.nam_sinh_cha"
+                       wire:model="form.NamSinhCha"
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
 
@@ -30,7 +30,7 @@
             <div>
                 <label class="text-sm font-medium">CCCD</label>
                 <input type="text"
-                       wire:model="form.cccd_cha"
+                       wire:model="form.CCCDCha"
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
 
@@ -38,7 +38,7 @@
             <div>
                 <label class="text-sm font-medium">Điện thoại</label>
                 <input type="text"
-                       wire:model="form.dien_thoai_cha"
+                       wire:model="form.DienThoaiCha"
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
 
@@ -46,7 +46,7 @@
             <div>
                 <label class="text-sm font-medium">Nghề nghiệp</label>
                 <input type="text"
-                       wire:model="form.nghe_nghiep_cha"
+                       wire:model="form.NgheNghiepCha"
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
 
@@ -54,7 +54,7 @@
             <div>
                 <label class="text-sm font-medium">Chức vụ</label>
                 <input type="text"
-                       wire:model="form.chuc_vu_cha"
+                       wire:model="form.ChucVuCha"
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
 
@@ -74,7 +74,7 @@
             <div class="md:col-span-2">
                 <label class="text-sm font-medium">Họ tên mẹ</label>
                 <input type="text"
-                       wire:model="form.ho_ten_me"
+                       wire:model="form.HoTenMe"
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
 
@@ -82,7 +82,7 @@
             <div>
                 <label class="text-sm font-medium">Năm sinh</label>
                 <input type="number"
-                       wire:model="form.nam_sinh_me"
+                       wire:model="form.NamSinhMe"
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
 
@@ -90,7 +90,7 @@
             <div>
                 <label class="text-sm font-medium">CCCD</label>
                 <input type="text"
-                       wire:model="form.cccd_me"
+                       wire:model="form.CCCDMe"
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
 
@@ -98,7 +98,7 @@
             <div>
                 <label class="text-sm font-medium">Điện thoại</label>
                 <input type="text"
-                       wire:model="form.dien_thoai_me"
+                       wire:model="form.DienThoaiMe"
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
 
@@ -106,7 +106,7 @@
             <div>
                 <label class="text-sm font-medium">Nghề nghiệp</label>
                 <input type="text"
-                       wire:model="form.nghe_nghiep_me"
+                       wire:model="form.NgheNghiepMe"
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
 
@@ -114,7 +114,7 @@
             <div>
                 <label class="text-sm font-medium">Chức vụ</label>
                 <input type="text"
-                       wire:model="form.chuc_vu_me"
+                       wire:model="form.ChucVuMe"
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
 
@@ -134,7 +134,7 @@
             <div class="md:col-span-2">
                 <label class="text-sm font-medium">Họ tên người giám hộ</label>
                 <input type="text"
-                       wire:model="form.ho_ten_nguoi_giam_ho"
+                       wire:model="form.HoTenNguoiGiamHo"
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
 
@@ -142,7 +142,7 @@
             <div>
                 <label class="text-sm font-medium">Quan hệ</label>
                 <input type="text"
-                       wire:model="form.quan_he_giam_ho"
+                       wire:model="form.QuanHeGiamHo"
                        placeholder="Ông, bà, cô, dì..."
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
@@ -151,7 +151,7 @@
             <div>
                 <label class="text-sm font-medium">CCCD</label>
                 <input type="text"
-                       wire:model="form.cccd_giam_ho"
+                       wire:model="form.CCCDGiamHo"
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
 
@@ -159,7 +159,7 @@
             <div>
                 <label class="text-sm font-medium">Điện thoại</label>
                 <input type="text"
-                       wire:model="form.dien_thoai_giam_ho"
+                       wire:model="form.DienThoaiGiamHo"
                        class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
             </div>
 
