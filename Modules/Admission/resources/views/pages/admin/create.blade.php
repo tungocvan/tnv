@@ -8,7 +8,7 @@
     </div>
 
     <div class="bg-white shadow rounded-lg overflow-hidden">
-        @livewire('admission.admin.applications.form', ['id' => $id ?? null])
+        @livewire('admission.public.registration-form', ['id' => $id ?? null])
     </div>
 </div>
 

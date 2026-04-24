@@ -1,84 +1,229 @@
-<div class="p-6">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Danh sách hồ sơ tuyển sinh</h2>
-        <div class="text-sm text-gray-500">Tổng số: {{ $applications->total() }} hồ sơ</div>
+<div class="p-4 sm:p-6 max-w-7xl mx-auto space-y-6">
+
+    {{-- HEADER --}}
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h2 class="text-2xl font-bold text-gray-900 tracking-tight">
+            Hồ sơ tuyển sinh
+        </h2>
+
+        <div class="flex items-center gap-3">
+            <span
+                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                {{ method_exists($applications, 'total') ? $applications->total() : count($applications) }} hồ sơ
+            </span>
+
+            <select wire:model.live="perPage"
+                class="h-10 px-3 rounded-xl border border-gray-300 text-sm shadow-sm
+               focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="all">All</option>
+            </select>
+        </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <input type="text" wire:model.debounce.300ms="search" placeholder="Tìm tên, mã định danh, SĐT..."
-            class="border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
+    {{-- FILTER --}}
+    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Tìm tên, CCCD, SĐT..."
+            class="w-full h-11 px-4 rounded-xl border border-gray-300 bg-white text-sm shadow-sm
+focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
 
-        <select wire:model="filterClass" class="border-gray-300 rounded-lg shadow-sm">
-            <option value="">-- Tất cả loại lớp --</option>
+        <select wire:model.live="filterClass"
+            class="w-full h-11 px-4 rounded-xl border border-gray-300 bg-white text-sm shadow-sm
+focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
+            <option value="">Tất cả lớp</option>
             <option value="Tăng cường Tiếng Anh">Tăng cường Tiếng Anh</option>
-            <option value="Lớp tiếng Anh tích hợp">Lớp tiếng Anh tích hợp</option>
+            <option value="Lớp tiếng Anh tích hợp">Lớp tích hợp</option>
         </select>
 
-        <select wire:model="filterStatus" class="border-gray-300 rounded-lg shadow-sm">
-            <option value="">-- Tất cả trạng thái --</option>
-            <option value="pending">Đang chờ duyệt</option>
+        <select wire:model.live="filterStatus"
+            class="w-full h-11 px-4 rounded-xl border border-gray-300 bg-white text-sm shadow-sm
+focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
+            <option value="">Tất cả trạng thái</option>
+            <option value="pending">Chờ duyệt</option>
             <option value="approved">Đã duyệt</option>
             <option value="rejected">Từ chối</option>
         </select>
-
-        <button wire:click="$refresh" class="bg-gray-100 px-4 py-2 rounded-lg font-medium hover:bg-gray-200">Làm mới
-            </option>
     </div>
 
-    <div class="bg-white shadow-xl rounded-lg overflow-hidden border border-gray-200">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">MHS</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học sinh</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lớp đăng ký</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày nộp</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái</th>
-                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Thao tác</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                @foreach ($applications as $item)
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap font-mono text-sm text-blue-600">{{ $item->mhs }}</td>
-                        <td class="px-6 py-4">
-                            <div class="text-sm font-bold text-gray-900">{{ $item->ho_va_ten_hoc_sinh }}</div>
-                            <div class="text-xs text-gray-500">Định danh: {{ $item->ma_dinh_danh }}</div>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">{{ $item->lo_ai_lop_dang_ky }}</td>
-                        <td class="px-6 py-4 text-sm text-gray-500">{{ $item->created_at->format('d/m/Y H:i') }}</td>
-                        <td class="px-6 py-4">
-                            <span
-                                class="px-2 py-1 text-xs rounded-full
-                            {{ $item->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                            {{ $item->status == 'approved' ? 'bg-green-100 text-green-800' : '' }}
-                            {{ $item->status == 'rejected' ? 'bg-red-100 text-red-800' : '' }}">
-                                {{ $item->status }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-right text-sm font-medium space-x-2">
-                            <a href="{{ route('admin.admission.edit', $item->id) }}"
-                                class="text-blue-600 hover:text-blue-900">Chi tiết</a>
-                            <a href="{{ route('admission.download-pdf', $item->id) }}"
-                                class="text-red-500 hover:text-red-700" title="Xuất PDF">
-                                <i class="fa fa-file-pdf"></i> Pdf
-                            </a>
 
-                            <a href="{{ route('admission.download-word', $item->id) }}"
-                                class="text-green-600 hover:text-green-900">
-                                <i class="fa fa-download"></i> Word
-                            </a>
+    <div
+        class="bg-white border border-gray-200 rounded-2xl shadow-sm p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-                            <button onclick="confirm('Xóa hồ sơ này?') || event.stopImmediatePropagation()"
-                                wire:click="delete({{ $item->id }})"
-                                class="text-red-600 hover:text-red-900">Xóa</button>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <div class="p-4 border-t">
-            {{ $applications->links() }}
+        {{-- LEFT: EXPORT --}}
+        <div class="flex items-center gap-3">
+            <button wire:click="export"
+                class="inline-flex items-center gap-2 px-4 h-11 rounded-xl bg-blue-600 text-white text-sm font-semibold
+                       hover:bg-blue-700 transition-colors shadow-sm">
+
+                {{-- icon --}}
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 16v-8m0 0l-3 3m3-3l3 3M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                </svg>
+
+                Export Excel
+            </button>
+
+            <span class="text-xs text-gray-500">
+                Xuất dữ liệu theo bộ lọc hiện tại
+            </span>
         </div>
+
+        {{-- RIGHT: IMPORT --}}
+        <form action="{{ route('admin.admission.import') }}" method="POST" enctype="multipart/form-data"
+            class="flex items-center gap-3">
+
+            @csrf
+
+            <label
+                class="flex items-center gap-2 px-3 h-11 rounded-xl border border-gray-300 bg-white text-sm text-gray-600 cursor-pointer hover:bg-gray-50 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l-3-3m3 3l3-3" />
+                </svg>
+
+                <span>Chọn file Excel</span>
+
+                <input type="file" name="file" class="hidden" accept=".xlsx,.xls">
+            </label>
+
+            <button type="submit"
+                class="inline-flex items-center px-4 h-11 rounded-xl bg-gray-900 text-white text-sm font-semibold
+                       hover:bg-gray-800 transition-colors shadow-sm">
+                Import
+            </button>
+        </form>
+    </div>
+
+    {{-- BULK BAR --}}
+    @if (count($selected) > 0)
+        <div class="flex justify-between items-center bg-indigo-50 border border-indigo-100 p-4 rounded-2xl">
+            <span class="text-sm font-medium text-indigo-800">
+                Đã chọn {{ count($selected) }} hồ sơ
+            </span>
+
+            <div class="flex items-center gap-2">
+                <button wire:click="deleteSelected"
+                    class="px-4 py-2 bg-white border border-gray-300 rounded-xl text-sm hover:bg-gray-50">
+                    Xóa
+                </button>
+
+                <button wire:click="$set('selected', [])"
+                    class="px-4 py-2 bg-white border border-gray-300 rounded-xl text-sm hover:bg-gray-50">
+                    Bỏ chọn
+                </button>
+            </div>
+        </div>
+    @endif
+
+    {{-- TABLE --}}
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm align-middle">
+
+                <thead class="bg-gray-50/75 border-b border-gray-200">
+                    <tr>
+                        <th class="px-6 py-4">
+                            <input type="checkbox" wire:model.live="selectAll"
+                                class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        </th>
+
+                        <th class="px-6 py-4 text-left font-semibold text-gray-600">Học sinh</th>
+                        <th class="px-6 py-4 text-left font-semibold text-gray-600">Lớp</th>
+                        <th class="px-6 py-4 text-left font-semibold text-gray-600">Ngày</th>
+                        <th class="px-6 py-4 text-left font-semibold text-gray-600">Trạng thái</th>
+                        <th class="px-6 py-4 text-right font-semibold text-gray-600">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-100">
+
+                    @foreach ($applications as $item)
+                        <tr class="hover:bg-gray-50/50">
+
+                            <td class="px-6 py-4">
+                                <input type="checkbox" value="{{ $item->id }}" wire:model.live="selected"
+                                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <div class="font-semibold text-gray-900">
+                                    {{ $item->ho_va_ten_hoc_sinh }}
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                    {{ $item->ma_dinh_danh }}
+                                </div>
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-600">
+                                <span class="inline-flex px-2.5 py-1 rounded-md text-xs bg-gray-100">
+                                    {{ $item->loai_lop_dang_ky }}
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-500">
+                                {{ $item->created_at->format('d/m/Y') }}
+                            </td>
+
+                            <td class="px-6 py-4">
+                                @if ($item->status === 'pending')
+                                    <div class="flex items-center gap-2">
+                                        <span class="px-2.5 py-1 text-xs bg-amber-100 text-amber-800 rounded-full">
+                                            Chờ duyệt
+                                        </span>
+
+                                        <button wire:click="approve({{ $item->id }})"
+                                            class="text-emerald-600 hover:text-emerald-700 text-xs font-medium">
+                                            Duyệt
+                                        </button>
+
+                                        <button wire:click="reject({{ $item->id }})"
+                                            class="text-rose-600 hover:text-rose-700 text-xs font-medium">
+                                            Từ chối
+                                        </button>
+                                    </div>
+                                @elseif($item->status === 'approved')
+                                    <span class="px-2.5 py-1 text-xs bg-emerald-100 text-emerald-800 rounded-full">
+                                        Đã duyệt
+                                    </span>
+                                @else
+                                    <span class="px-2.5 py-1 text-xs bg-rose-100 text-rose-800 rounded-full">
+                                        Từ chối
+                                    </span>
+                                @endif
+                            </td>
+
+                            <td class="px-6 py-4 text-right">
+                                 {{-- Chi tiết / Edit --}}
+                                <a href="{{ route('admin.admission.edit', $item->id) }}"
+                                    class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-600
+              hover:bg-blue-50 rounded-lg transition">
+                                    Chi tiết
+                                </a>
+                                <button wire:click="delete({{ $item->id }})"
+                                    class="text-rose-500 hover:text-rose-700 text-sm">
+                                    Xóa
+                                </button>
+                            </td>
+                        </tr>
+                    @endforeach
+
+                </tbody>
+            </table>
+        </div>
+
+        {{-- PAGINATION --}}
+        @if ($perPage !== 'all' && method_exists($applications, 'hasPages') && $applications->hasPages())
+            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50/50">
+                {{ $applications->links() }}
+            </div>
+        @endif
+
     </div>
 </div>

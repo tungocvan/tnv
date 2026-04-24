@@ -5,6 +5,7 @@ namespace Modules\Admission\Livewire\Public;
 use Livewire\Component;
 use Modules\Admission\Models\AdmissionLocation;
 use Modules\Admission\Models\AdmissionCatalog;
+use Modules\Admission\Models\AdmissionApplication;
 use Modules\Admission\Services\AdmissionService;
 
 class RegistrationForm extends Component
@@ -19,6 +20,8 @@ class RegistrationForm extends Component
     public $religions = [];
     public $copyNoiSinhToQueQuan = false;
     public $sameAddress = false;
+    public $applicationId = null;
+    public $isEdit = false;
 
     // ⚠️ QUAN TRỌNG: GIỮ NGUYÊN KEY PascalCase
     // public $form = [
@@ -35,7 +38,7 @@ class RegistrationForm extends Component
     //     'NoiSinh' => '',
     //     'NoiDangKyKhaiSinh' => '',
     //     'QueQuan' => '',
- 
+
     //     // STEP 2
     //     'TTSN' => '',
     //     'TTD' => '',
@@ -91,7 +94,7 @@ class RegistrationForm extends Component
     //     'NgayLamDon' => '',
     //     'NguoiLamDon' => '',
     // ];
-     public $form = [
+    public $form = [
 
         // STEP 1
         'HoVaTenHocSinh' => 'Nguyễn Minh An',
@@ -105,7 +108,7 @@ class RegistrationForm extends Component
         'NoiSinh' => 'Tp Hồ Chí Minh',
         'NoiDangKyKhaiSinh' => 'UBND Quận 7',
         'QueQuan' => 'Tp Hồ Chí Minh',
- 
+
         // STEP 2
         'TTSN' => '45',
         'TTD' => 'Huỳnh Tấn Phát',
@@ -169,13 +172,100 @@ class RegistrationForm extends Component
         'form.NguoiLamDon' => 'required',
     ];
 
-    public function mount()
+    // public function mount()
+    // {
+    //     $this->provinces = AdmissionLocation::select('province_name')->distinct()->get()->toArray();
+    //     $this->ethnicities = AdmissionCatalog::where('type', 'ethnicity')->get()->toArray();
+    //     $this->religions = AdmissionCatalog::where('type', 'religion')->get()->toArray();
+
+    //     $this->form['NgayLamDon'] = date('Y-m-d');
+    // }
+
+    public function mount($id = null)
     {
-        $this->provinces = AdmissionLocation::select('province_name')->distinct()->get()->toArray();
+        // Load danh mục (giữ nguyên)
+              $this->provinces = AdmissionLocation::select('province_name')->distinct()->get()->toArray();
         $this->ethnicities = AdmissionCatalog::where('type', 'ethnicity')->get()->toArray();
         $this->religions = AdmissionCatalog::where('type', 'religion')->get()->toArray();
 
         $this->form['NgayLamDon'] = date('Y-m-d');
+        // ================= EDIT MODE =================
+        if ($id) {
+            $this->isEdit = true;
+            $this->applicationId = $id;
+
+            $app = AdmissionApplication::findOrFail($id);
+
+            // ⚠️ MAP DB → FORM (phải đúng key Service)
+            $this->form = [
+                // STEP 1
+                'HoVaTenHocSinh' => $app->ho_va_ten_hoc_sinh,
+                'GioiTinh' => $app->gioi_tinh,
+                'NgaySinh' => $app->ngay_sinh,
+                'DanToc' => $app->dan_toc,
+                'MaDinhDanh' => $app->ma_dinh_danh,
+                'QuocTich' => $app->quoc_tich,
+                'TonGiao' => $app->ton_giao,
+                'SDTEnetViet' => $app->sdt_enetviet,
+                'NoiSinh' => $app->noi_sinh,
+                'NoiDangKyKhaiSinh' => $app->noi_dang_ky_khai_sinh,
+                'QueQuan' => $app->que_quan,
+
+                // STEP 2
+                'TTSN' => $app->ttsn,
+                'TTD' => $app->ttd,
+                'TTKP' => $app->ttkp,
+                'TTPX' => $app->ttpx,
+                'TTTTP' => $app->ttttp,
+
+                'HTSN' => $app->htsn,
+                'HTD' => $app->htd,
+                'HTKP' => $app->htkp,
+                'HTPX' => $app->htpx,
+                'HTTTP' => $app->htttp,
+
+                // STEP 3
+                'OChungVoi' => $app->o_chung_voi,
+                'QuanHeNguoiNuoiDuong' => $app->quan_he_nguoi_nuoi_duong,
+                'ConThu' => $app->con_thu,
+                'TSAnhChiEm' => $app->ts_anh_chi_em,
+                'HoanThanhLopLa' => $app->hoan_thanh_lop_la,
+                'TruongMamNon' => $app->truong_mam_non,
+
+                // ⚠️ STRING → ARRAY
+                'KhaNangHocSinh' => $app->kha_nang_hoc_sinh
+                    ? explode(', ', $app->kha_nang_hoc_sinh)
+                    : [],
+
+                'SucKhoeCanLuuY' => $app->suc_khoe_can_luu_y
+                    ? explode(', ', $app->suc_khoe_can_luu_y)
+                    : [],
+
+                // STEP 4
+                'HoTenCha' => $app->ho_ten_cha,
+                'NamSinhCha' => $app->nam_sinh_cha,
+                'DienThoaiCha' => $app->dien_thoai_cha,
+
+                'HoTenMe' => $app->ho_ten_me,
+                'NamSinhMe' => $app->nam_sinh_me,
+                'DienThoaiMe' => $app->dien_thoai_me,
+
+                // STEP 5
+                'LoaiLopDangKy' => $app->loai_lop_dang_ky,
+
+                'CK_GocHocTap' => (bool)$app->ck_goc_hoc_tap,
+                'CK_SachVo' => (bool)$app->ck_sach_vo,
+                'CK_HopPH' => (bool)$app->ck_hop_ph,
+                'CK_ThamGiaHD' => (bool)$app->ck_tham_gia_hd,
+                'CK_GanGui' => (bool)$app->ck_gan_gui,
+
+                'NguoiLamDon' => $app->nguoi_lam_don,
+            ];
+
+            // Load wards nếu có
+            $this->updated('form.TTTTP');
+            $this->updated('form.HTTTP');
+        }
     }
 
     public function updated($field)
@@ -246,55 +336,97 @@ class RegistrationForm extends Component
 
     // ================= SAVE =================
 
+    // public function save(AdmissionService $service)
+    // {
+    //     $this->validate();
+
+    //     try {
+
+    //         // ⚠️ CLONE DATA (QUAN TRỌNG)
+    //         $data = $this->form;
+
+    //         // ===== STEP 3 =====
+
+    //         // Khả năng
+    //         $data['KhaNangHocSinh'] = !empty($data['KhaNangHocSinh'])
+    //             ? implode(', ', $data['KhaNangHocSinh'])
+    //             : null;
+
+    //         // Sức khỏe
+    //         $health = $data['SucKhoeCanLuuY'] ?? [];
+
+    //         if (!empty($data['SucKhoeKhac'])) {
+    //             $health[] = $data['SucKhoeKhac'];
+    //         }
+
+    //         $data['SucKhoeCanLuuY'] = !empty($health)
+    //             ? implode(', ', $health)
+    //             : null;
+
+    //         // Người nuôi dưỡng
+    //         if (($data['OChungVoi'] ?? null) === 'other') {
+    //             $data['OChungVoi'] = $data['QuanHeNguoiNuoiDuong'] ?? null;
+    //         }
+
+    //         // Trim
+    //         $data = array_map(fn($v) => is_string($v) ? trim($v) : $v, $data);
+
+    //         // SAVE
+    //         $application = $service->createRegistration($data);
+
+    //         if ($application && $application->id) {
+
+    //             $this->dispatch('show-success-modal', [
+    //                 'name' => $application->ho_va_ten_hoc_sinh,
+    //                 'redirectUrl' => route('admission.register')
+    //             ]);
+    //         }
+    //     } catch (\Exception $e) {
+
+    //         \Log::error("Lỗi lưu đơn: " . $e->getMessage());
+
+    //         session()->flash('error', 'Có lỗi xảy ra khi lưu.');
+    //     }
+    // }
+
     public function save(AdmissionService $service)
     {
         $this->validate();
 
         try {
-
-            // ⚠️ CLONE DATA (QUAN TRỌNG)
             $data = $this->form;
 
-            // ===== STEP 3 =====
-
-            // Khả năng
+            // FORMAT giống bạn đang làm
             $data['KhaNangHocSinh'] = !empty($data['KhaNangHocSinh'])
                 ? implode(', ', $data['KhaNangHocSinh'])
                 : null;
 
-            // Sức khỏe
-            $health = $data['SucKhoeCanLuuY'] ?? [];
-
-            if (!empty($data['SucKhoeKhac'])) {
-                $health[] = $data['SucKhoeKhac'];
-            }
-
-            $data['SucKhoeCanLuuY'] = !empty($health)
-                ? implode(', ', $health)
+            $data['SucKhoeCanLuuY'] = !empty($data['SucKhoeCanLuuY'])
+                ? implode(', ', $data['SucKhoeCanLuuY'])
                 : null;
 
-            // Người nuôi dưỡng
             if (($data['OChungVoi'] ?? null) === 'other') {
                 $data['OChungVoi'] = $data['QuanHeNguoiNuoiDuong'] ?? null;
             }
 
-            // Trim
-            $data = array_map(fn($v) => is_string($v) ? trim($v) : $v, $data);
-
-            // SAVE
-            $application = $service->createRegistration($data);
-
-            if ($application && $application->id) {
-                return redirect()->route('admission.download-pdf', [
-                    'id' => $application->id
+            // ================= EDIT / CREATE =================
+            if ($this->isEdit) {
+                $application = $service->updateRegistration($this->applicationId, $data);
+                $this->dispatch('show-success-modal', [
+                    'name' => $application->ho_va_ten_hoc_sinh,
+                    'redirectUrl' => route('admin.admission.index')
+                ]);
+            } else {
+                $application = $service->createRegistration($data);
+                $this->dispatch('show-success-modal', [
+                    'name' => $application->ho_va_ten_hoc_sinh,
+                    'redirectUrl' => route('admission.register')
                 ]);
             }
 
+
         } catch (\Exception $e) {
-
             \Log::error("Lỗi lưu đơn: " . $e->getMessage());
-
-            session()->flash('error', 'Có lỗi xảy ra khi lưu.');
         }
     }
 

@@ -12,6 +12,8 @@ Route::middleware(['web','auth:admin'])
         Route::get('/edit/{id}', [AdmissionController::class, 'adminEdit'])->name('edit');
         // Admin cũng có thể xuất PDF để lưu trữ hồ sơ
         Route::get('/export-pdf/{id}', [AdmissionController::class, 'downloadPdf'])->name('export-pdf');
+        Route::get('/export', [AdmissionController::class, 'export'])->name('export');
+        Route::post('/import', [AdmissionController::class, 'import'])->name('import');
 
     });
 

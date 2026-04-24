@@ -76,6 +76,8 @@ return new class extends Migration {
             $table->boolean('ck_gan_gui')->default(false);
             $table->string('ngay_lam_don')->nullable();
             $table->string('nguoi_lam_don')->nullable();
+            $table->string('pdf_path')->nullable();
+            $table->string('word_path')->nullable();
 
             $table->timestamps();
         });
