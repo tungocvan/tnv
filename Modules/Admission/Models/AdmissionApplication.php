@@ -4,6 +4,7 @@ namespace Modules\Admission\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class AdmissionApplication extends Model
 {
@@ -108,15 +109,39 @@ class AdmissionApplication extends Model
         });
 
         // ❗ XÓA FILE KHI DELETE
+
+
         static::deleting(function ($model) {
 
             foreach (['pdf_path', 'word_path'] as $field) {
 
                 $path = $model->$field;
 
-                if ($path && file_exists($path)) {
-                    unlink($path);
-                }
+                // \Log::info('DELETE DEBUG START', [
+                //     'field' => $field,
+                //     'path' => $path,
+                // ]);
+
+                if (!$path) continue;
+
+                // 🔥 FIX: convert to full path
+                $fullPath = storage_path('app/' . $path);
+
+                $exists = file_exists($fullPath);
+
+                // \Log::info('FILE EXISTS CHECK', [
+                //     'fullPath' => $fullPath,
+                //     'exists' => $exists,
+                // ]);
+
+                if (!$exists) continue;
+
+                $deleted = @unlink($fullPath);
+
+                // \Log::info('UNLINK RESULT', [
+                //     'deleted' => $deleted,
+                //     'error' => error_get_last(),
+                // ]);
             }
         });
     }

@@ -42,7 +42,7 @@ Admission/
 │       ├── AdmissionLocationSeeder.php
 │       └── DatabaseSeeder.php
 ├── resources
-│   ├── lang
+│   ├── lang 
 │   └── views
 │       ├── admission.blade.php
 │       ├── components

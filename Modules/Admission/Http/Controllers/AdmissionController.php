@@ -149,5 +149,10 @@ class AdmissionController extends Controller
         return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
     }
 
+    public function import(Request $request)
+    {
+        Excel::import(new ApplicationsImport, $request->file('file'));
 
+        return back()->with('success', 'Import thành công');
+    }
 }

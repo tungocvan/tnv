@@ -101,9 +101,11 @@ class Index extends Component
 
     public function deleteSelected()
     {
-        if (empty($this->selected)) return;
+        AdmissionApplication::whereIn('id', $this->selected)
+            ->get()
+            ->each
+            ->delete();
 
-        AdmissionApplication::whereIn('id', $this->selected)->delete();
         $this->resetSelection();
     }
 
@@ -114,16 +116,16 @@ class Index extends Component
     }
 
     public function export()
-{
-    return Excel::download(
-        new ApplicationsExport(
-            $this->search,
-            $this->filterStatus,
-            $this->filterClass
-        ),
-        'applications.xlsx'
-    );
-}
+    {
+        return Excel::download(
+            new ApplicationsExport(
+                $this->search,
+                $this->filterStatus,
+                $this->filterClass
+            ),
+            'applications.xlsx'
+        );
+    }
 
     public function render()
     {

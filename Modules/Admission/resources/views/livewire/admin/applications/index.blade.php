@@ -1,5 +1,17 @@
 <div class="p-4 sm:p-6 max-w-7xl mx-auto space-y-6">
+    {{-- SUCCESS --}}
+    @if (session('success'))
+        <div class="mb-4 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm">
+            {{ session('success') }}
+        </div>
+    @endif
 
+    {{-- ERROR --}}
+    @if (session('error'))
+        <div class="mb-4 px-4 py-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm">
+            {{ session('error') }}
+        </div>
+    @endif
     {{-- HEADER --}}
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 class="text-2xl font-bold text-gray-900 tracking-tight">
@@ -75,26 +87,31 @@ focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
 
         {{-- RIGHT: IMPORT --}}
         <form action="{{ route('admin.admission.import') }}" method="POST" enctype="multipart/form-data"
-            class="flex items-center gap-3">
+            x-data="{ fileName: '' }" class="flex items-center gap-3">
 
             @csrf
 
             <label
                 class="flex items-center gap-2 px-3 h-11 rounded-xl border border-gray-300 bg-white text-sm text-gray-600 cursor-pointer hover:bg-gray-50 transition-colors">
+
+                <!-- ICON -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l-3-3m3 3l3-3" />
                 </svg>
 
-                <span>Chọn file Excel</span>
+                <!-- TEXT -->
+                <span x-text="fileName || 'Chọn file Excel'"></span>
 
-                <input type="file" name="file" class="hidden" accept=".xlsx,.xls">
+                <!-- INPUT -->
+                <input type="file" name="file" class="hidden" accept=".xlsx,.xls"
+                    @change="fileName = $event.target.files[0]?.name">
             </label>
 
-            <button type="submit"
+            <button type="submit" :disabled="!fileName"
                 class="inline-flex items-center px-4 h-11 rounded-xl bg-gray-900 text-white text-sm font-semibold
-                       hover:bg-gray-800 transition-colors shadow-sm">
+           hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
                 Import
             </button>
         </form>
@@ -200,7 +217,7 @@ focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
                             </td>
 
                             <td class="px-6 py-4 text-right">
-                                 {{-- Chi tiết / Edit --}}
+                                {{-- Chi tiết / Edit --}}
                                 <a href="{{ route('admin.admission.edit', $item->id) }}"
                                     class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-600
               hover:bg-blue-50 rounded-lg transition">
