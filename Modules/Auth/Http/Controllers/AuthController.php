@@ -17,7 +17,7 @@ class AuthController extends Controller
     }
 
     public function logout()
-    {
+    { 
         Auth::guard('admin')->logout();
         session()->invalidate();
         session()->regenerateToken();

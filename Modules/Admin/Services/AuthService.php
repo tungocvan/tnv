@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Exception;
+use Spatie\Permission\Models\Role;
 
 class AuthService
 {
@@ -40,7 +41,9 @@ class AuthService
                 'avatar' => $googleUser->avatar,
                 'password' => Hash::make(Str::random(24)), // Password ngẫu nhiên bảo mật
                 'is_active' => true,
-            ]);
+            ]); 
+            $roleUser = Role::firstOrCreate(['name' => 'User', 'guard_name' => 'admin']);
+            $user->assignRole($roleUser);
         }
 
         // 3. Kiểm tra trạng thái hoạt động (Section 4: Check permission nghiệp vụ)

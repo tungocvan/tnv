@@ -23,7 +23,7 @@ use Modules\Website\Http\Controllers\Admin\CustomerController;
 
 // Config
 $websitePrefix = config('website.route_prefix', 'website');
-
+ 
 /*
 |--------------------------------------------------------------------------
 | WEB ROUTES
@@ -35,8 +35,8 @@ Route::middleware(['web'])->group(function () use ($websitePrefix) {
     // ====================================================
     // 1. AUTHENTICATION (Guest)
     // ====================================================
-    Route::get('/login', [AuthController::class, 'login'])->name('login');
-    Route::get('/register', [AuthController::class, 'register'])->name('register');
+    Route::get('/website/login', [AuthController::class, 'login'])->name('login');
+    Route::get('/website/register', [AuthController::class, 'register'])->name('register');
 
 
     // ====================================================
