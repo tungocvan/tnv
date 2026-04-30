@@ -11,3 +11,4 @@ class HeaderController extends Controller
         return view('Website::pages.admin.header.index');
     }
 }
+ 

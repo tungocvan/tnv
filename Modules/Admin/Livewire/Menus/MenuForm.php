@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Cache;
 // use Illuminate\Support\Facades\Log;
 // use Illuminate\Support\Str;
 use Livewire\Component;
-use Modules\Website\Models\Category;
+use Modules\Admin\Models\Category;
 use Spatie\Permission\Models\Permission;
 
 class MenuForm extends Component

@@ -10,5 +10,6 @@ class DashboardController extends Controller
     {
         // Trả về View Blade bình thường
         return view('Admin::pages.dashboard');
+       // return view('Website::pages.dashboard');
     }
 }

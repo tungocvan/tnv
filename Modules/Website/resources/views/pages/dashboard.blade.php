@@ -7,16 +7,16 @@
         <p class="mt-1 text-sm text-gray-500">Chào mừng trở lại! Dưới đây là tình hình kinh doanh hôm nay.</p>
     </div>
 
-    {{-- @livewire('admin.dashboard.stats-overview') --}}
+    @livewire('website.dashboard.stats-overview')
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         <div class="lg:col-span-2">
-            {{-- @livewire('admin.dashboard.revenue-chart') --}}
+            @livewire('website.dashboard.revenue-chart')
         </div>
 
         <div class="lg:col-span-1">
-            {{-- @livewire('admin.dashboard.recent-orders') --}}
+            @livewire('website.dashboard.recent-orders')
         </div>
     </div>
 @endsection

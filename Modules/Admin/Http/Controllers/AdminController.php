@@ -20,6 +20,10 @@ class AdminController extends Controller
     {
         return view('Admin::admin');
     }
+    public function adminHeader()
+    {
+        return view('Admin::pages.admin.header.index');
+    }
 
     /**
      * Show the form for creating a new resource.

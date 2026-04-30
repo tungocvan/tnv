@@ -1,7 +1,7 @@
 <?php
 
-return [
-    'name' => 'Website',
-    'type' => 'shell',
-    'enabled' => true,
-];
+return array (
+  'name' => 'Website',
+  'type' => 'shell',
+  'enabled' => true,
+);

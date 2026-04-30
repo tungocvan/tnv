@@ -11,10 +11,19 @@ use Illuminate\Database\Eloquent\Builder;
 class Category extends Model
 {
     protected $fillable = [
-        'name', 'slug', 'url', 'icon', 'can', 'type',
-        'parent_id', 'description', 'image',
-        'is_active', 'sort_order',
-        'meta_title', 'meta_description'
+        'name',
+        'slug',
+        'url',
+        'icon',
+        'can',
+        'type',
+        'parent_id',
+        'description',
+        'image',
+        'is_active',
+        'sort_order',
+        'meta_title',
+        'meta_description'
     ];
 
     protected $casts = [
@@ -43,16 +52,6 @@ class Category extends Model
         return $this->children()->with('childrenRecursive');
     }
 
-    // public function posts()
-    // {
-    //     // Quan hệ Many-to-Many qua bảng trung gian 'category_post'
-    //     return $this->belongsToMany(Post::class, 'category_post', 'category_id', 'post_id');
-    // }
-
-    // public function products(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(WpProduct::class, 'category_product', 'category_id', 'product_id');
-    // }
 
     public function scopePostType($query)
     {
@@ -108,5 +107,49 @@ class Category extends Model
         }
 
         return $ids;
+    }
+
+    protected static function booted()
+    {
+        // ======================
+        // CREATED / UPDATED
+        // ======================
+        static::saved(function ($category) {
+
+            if ($category->type !== 'menu') {
+                return;
+            }
+           
+            // chỉ clear nếu field ảnh hưởng menu thay đổi
+            if ($category->wasChanged([
+                'name',
+                'url',
+                'icon',
+                'parent_id',
+                'sort_order',
+                'is_active',
+                'can'
+            ])) {
+                self::clearMenuCache();
+            }
+        });
+
+        // ======================
+        // DELETED
+        // ======================
+        static::deleted(function ($category) {
+            if ($category->type === 'menu') {
+                self::clearMenuCache();
+            }
+            
+        });
+    }
+
+    // ======================
+    // CLEAR CACHE
+    // ======================
+    protected static function clearMenuCache()
+    {
+        \Cache::forget('admin_sidebar_menu');
     }
 }

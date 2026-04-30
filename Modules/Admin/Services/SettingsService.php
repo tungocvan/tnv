@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\Website\Services;
+namespace Modules\Admin\Services;
 
-use Modules\Website\Models\Setting;
+use Modules\Admin\Models\Setting;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Exception;

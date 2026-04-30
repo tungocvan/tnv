@@ -1,4 +1,4 @@
-pm2 start queue/queue-worker.sh --name laravel-queue-ntd
+pm2 start queue/queue-worker.sh --name laravel-queue-tnv
 # phan-quyen.sh Modules/Website/database/Seeders/menu.json
 echo "
     Câu lệnh quản lý pm2 \n
@@ -10,4 +10,4 @@ echo "
     pm2 logs laravel-queue	Xem log \n
     pm2 flush laravel-queue // xóa các logs \n    
 "
-echo "Đang khởi động worker queue...tại project /var/www/ntd"
+echo "Đang khởi động worker queue...tại project /var/www/tnv"

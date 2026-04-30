@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Auth\AuthenticationException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -22,5 +23,25 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (AuthenticationException $e, $request) {
+
+            if ($request->routeIs('admin.*')) {
+                return redirect()->guest(route('admin.login'));
+            }
+
+            return redirect()->guest(route('login'));
+        });
+    
+       /**
+         * ❌ Handle 404 (optional - nên có)
+         */
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, $request) {
+
+            if ($request->routeIs('admin.*')) {
+                return response()->view('Admin::errors.404', [], 404);
+            }
+
+            return redirect()->guest(route('admin.login'));
+        });
+        
     })->create();

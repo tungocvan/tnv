@@ -3,7 +3,7 @@
 return array (
   'name' => 'Admission',
   'type' => 'domain',
-  'enabled' => true,
+  'enabled' => false,
   'tables' => 
   array (
     0 => 'admission_locations',

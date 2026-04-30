@@ -1,7 +1,7 @@
 <?php
 
-return [
-    'name' => 'Product',
-    'type' => 'domain',
-    'enabled' => true,
-];
+return array (
+  'name' => 'Product',
+  'type' => 'domain',
+  'enabled' => true,
+);

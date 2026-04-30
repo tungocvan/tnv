@@ -1,7 +1,7 @@
 <?php
 
-return [
-    'name' => 'Post',
-    'type' => 'domain',
-    'enabled' => true,
-];
+return array (
+  'name' => 'Post',
+  'type' => 'domain',
+  'enabled' => false,
+);

@@ -79,17 +79,10 @@
                     <p class="text-xs text-gray-500 truncate">{{ $user->email ?? '' }}</p>
                 </div>
 
-                {{-- Lấy dữ liệu động từ vị trí 'admin' --}}
-                @php
-                    $adminMenuItems = app(\Modules\Website\Services\HeaderMenuService::class)->getMenuTreeByLocation(
-                        'admin',
-                    );
-                @endphp
-
                 @foreach ($adminMenuItems as $item)
-                    <a href="{{ $item->url ?? '#' }}"
+                    <a href="{{ $item->url ?? $item['url'] ?? '#' }}"
                         class="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50" role="menuitem">
-                        {{ $item->title }}
+                        {{ $item->title ?? $item['title'] }}
                     </a>
                 @endforeach
 
